@@ -1,0 +1,31 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '4.7.1' # You can change this to '5.0' if your project targets .NET 5
+    
+    - name: Restore NuGet packages
+      run: nuget restore SPICA.sln
+    
+    - name: Build solution
+      run: msbuild /p:Configuration=Release SPICA.sln
+      
+    - name: Run tests
+      run: dotnet test YourSolution.Tests/YourSolution.Tests.csproj --configuration Release
